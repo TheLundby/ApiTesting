@@ -1,0 +1,22 @@
+﻿@inject HttpClient http
+
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<button @onclick="CallApi">Test connection</button>
+
+@code {
+
+
+
+
+    private async Task CallApi()
+    {
+        string response = await http.GetFromJsonAsync("https://localhost/api/ok");
+    }
+}

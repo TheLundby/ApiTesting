@@ -1,0 +1,39 @@
+﻿@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@inject Services.AuthService authService
+
+@page "/login"
+
+<h3>Login</h3>
+
+<EditForm Model="model">
+
+</EditForm>
+
+@code {
+    private record LoginFormModel(string Username = "", string Password = "");
+    private LoginFormModel model = new LoginFormModel();
+
+    private string message = string.Empty;
+
+
+    private async Task Submit()
+    {
+        var response = await Http.PostAsJsonAsync("api/auth/login", model);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Login failed");
+            model.Password = "";
+            message = $"Brugernavn og adganskode matcher ikke";
+            return;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        await JS.InvokeVoidAsync("localStorage.setItem", "jwt", result!.Token);
+
+        await authService.SetToken(result!.Token);
+        Nav.NavigateTo("/");
+    }
+}
