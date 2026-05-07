@@ -1,7 +1,8 @@
 ﻿using API;
-using Microsoft.AspNetCore.Mvc;
 using Application.Handlers;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers
 {
@@ -36,6 +37,13 @@ namespace Server.Controllers
             }
 
             return Ok(new { token });
+        }
+
+        [Authorize]
+        [HttpGet("secure")]
+        public IActionResult SecureEndpoint()
+        {
+            return Ok("Valid token");
         }
     }
 }
