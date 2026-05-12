@@ -7,13 +7,26 @@
 
 <h3>Login</h3>
 
-<EditForm Model="model">
+<div class="form">
+    <EditForm Model="@model" OnSubmit="Submit">
+        <label>Brugernavn</label>
+        <InputText type="text" @bind-Value="model.Username" />
+        <br><br>
+        <label>Adgangskode</label>
+        <InputText type="password" @bind-Value="model.Password" />
+        <br><br>
 
-</EditForm>
+        <button type="submit">Login</button>
+    </EditForm>
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <br>
+        <p>@message</p>
+    }
+</div>
 
 @code {
-    private record LoginFormModel(string Username = "", string Password = "");
-    private LoginFormModel model = new LoginFormModel();
+    private LoginFormModel model = new();
 
     private string message = string.Empty;
 
@@ -30,10 +43,16 @@
             return;
         }
 
-        var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        await JS.InvokeVoidAsync("localStorage.setItem", "jwt", result!.Token);
+        var token = await response.Content.ReadFromJsonAsync<string>();
+        await JS.InvokeVoidAsync("localStorage.setItem", "jwt", token);
 
-        await authService.SetToken(result!.Token);
+        await authService.SetToken(token!);
         Nav.NavigateTo("/");
+    }
+
+    public class LoginFormModel
+    {
+        public string Username;
+        public string Password;
     }
 }

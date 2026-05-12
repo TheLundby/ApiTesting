@@ -13,6 +13,17 @@ namespace API
 
             // Add services to the container.
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClient", policy =>
+                {
+                    policy
+                        .WithOrigins("https://localhost:7223")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -35,7 +46,6 @@ namespace API
 
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
@@ -49,6 +59,9 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+
+            app.UseCors("AllowClient");
 
 
             app.MapControllers();

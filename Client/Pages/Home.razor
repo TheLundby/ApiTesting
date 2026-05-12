@@ -10,13 +10,29 @@ Welcome to your new app.
 
 <button @onclick="CallApi">Test connection</button>
 
-@code {
 
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+
+@code {
+    string message = string.Empty;
 
 
 
     private async Task CallApi()
     {
-        string response = await http.GetFromJsonAsync("https://localhost/api/ok");
+        try
+        {
+
+            var response = await http.GetStringAsync("api/test/ok");
+            message = response;
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
     }
 }
